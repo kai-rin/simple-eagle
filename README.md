@@ -1,4 +1,16 @@
-# Simple Eagle
+# Simple Eagle (Fork)
+
+> このリポジトリは [da2el-ai/simple-eagle](https://github.com/da2el-ai/simple-eagle) のフォークです。
+> オリジナルに以下の機能を追加しています。
+
+### フォークでの追加機能
+
+- **パスワード認証** — 環境変数 `EAGLE_AUTH_PASSWORD` でパスワードを設定可能（未設定時は認証なし）
+- **ダークモード / テーマ切替** — ライト・ダーク・システム連動の3モード
+- **QRコード表示** — ログイン画面でサーバーURLのQRコードを表示し、スマホからの接続を簡単に
+- **Lightbox 改善** — 詳細表示UIの改善
+
+---
 
 画像管理ソフトのEagleをスマホから見たくて作成したシンプルなインターフェースです。
 
@@ -60,12 +72,29 @@
 EagleをインストールしているPCで実行してください。
 
 ```
-git clone https://github.com/da2el-ai/simple-eagle.git
+git clone https://github.com/kai-rin/simple-eagle.git
 ```
 
 ## 実行
 
 あらかじめEagleを起動しておく必要があります。
+
+### 認証パスワードの設定（任意）
+
+`run.bat.example`（または `run.sh.example`）をコピーしてリネームし、パスワードを設定してください。
+
+```
+copy run.bat.example run.bat
+```
+
+`run.bat` 内の下記行のコメントを外してパスワードを設定します：
+```
+REM set EAGLE_AUTH_PASSWORD=your_password_here
+↓
+set EAGLE_AUTH_PASSWORD=任意のパスワード
+```
+
+未設定の場合は認証なしでアクセスできます。
 
 ### Windows で使う
 
