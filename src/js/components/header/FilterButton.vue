@@ -1,7 +1,7 @@
 <template>
   <button
     @click="$emit('click')"
-    class="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+    class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
     title="フィルター"
   >
     <!-- じょうろのようなアイコン -->
@@ -11,7 +11,7 @@
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      class="text-gray-600"
+      class="text-gray-600 dark:text-gray-300"
     >
       <path
         d="M3 3h18l-6 6v8l-6 2v-10l-6-6z"

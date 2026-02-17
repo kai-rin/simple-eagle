@@ -5,6 +5,7 @@
 /* カスタムスタイルをここに追加 */
 
 body {
+  @apply bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100;
   overflow-wrap: anywhere; /* 収まらない場合に折り返す */
   word-break: normal; /* 単語の分割はデフォルトに依存 */
   line-break: strict; /* 禁則処理を厳格に適用 */
@@ -62,6 +63,8 @@ body {
     @apply p-2;
     @apply rounded;
     @apply hover:bg-gray-200;
+    @apply dark:text-gray-200;
+    @apply dark:hover:bg-gray-700;
     @apply duration-200;
     @apply text-sm;
 }

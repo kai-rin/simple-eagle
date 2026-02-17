@@ -1,5 +1,8 @@
 import { ref } from 'vue'
 
+// テーマの型定義
+export type TTheme = 'light' | 'dark' | 'system'
+
 // 設定データの型定義
 export type TSettings = {
   max_file_size: number | null
@@ -10,6 +13,7 @@ export type TSettings = {
     xl: number
   }
   objectFit: 'cover' | 'contain'
+  theme: TTheme
 }
 
 // デフォルト設定値
@@ -21,7 +25,8 @@ const DEFAULT_SETTINGS = {
     md: 5,
     xl: 6
   },
-  objectFit: 'cover'
+  objectFit: 'cover',
+  theme: 'system'
 } as const
 
 // localStorage のキー
@@ -36,7 +41,8 @@ function createSettings() {
     max_file_size: null,
     quality: null,
     gridSize: DEFAULT_SETTINGS.gridSize,
-    objectFit: DEFAULT_SETTINGS.objectFit
+    objectFit: DEFAULT_SETTINGS.objectFit,
+    theme: DEFAULT_SETTINGS.theme
   })
 
   // localStorageから設定を読み込む
@@ -49,7 +55,8 @@ function createSettings() {
           max_file_size: parsed.max_file_size || null,
           quality: parsed.quality || null,
           gridSize: parsed.gridSize || DEFAULT_SETTINGS.gridSize,
-          objectFit: parsed.objectFit || DEFAULT_SETTINGS.objectFit
+          objectFit: parsed.objectFit || DEFAULT_SETTINGS.objectFit,
+          theme: parsed.theme || DEFAULT_SETTINGS.theme
         }
       }
     } catch (error) {
@@ -65,9 +72,10 @@ function createSettings() {
       max_file_size: settings.value.max_file_size || DEFAULT_SETTINGS.max_file_size,
       quality: settings.value.quality || DEFAULT_SETTINGS.quality,
       gridSize: settings.value.gridSize,
-      objectFit: settings.value.objectFit
+      objectFit: settings.value.objectFit,
+      theme: settings.value.theme
     }
-    
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settingsToSave))
     return settingsToSave
   }
@@ -78,7 +86,8 @@ function createSettings() {
       max_file_size: DEFAULT_SETTINGS.max_file_size,
       quality: DEFAULT_SETTINGS.quality,
       gridSize: DEFAULT_SETTINGS.gridSize,
-      objectFit: DEFAULT_SETTINGS.objectFit
+      objectFit: DEFAULT_SETTINGS.objectFit,
+      theme: DEFAULT_SETTINGS.theme
     }
   }
 
@@ -113,13 +122,16 @@ function createSettings() {
       max_file_size: null,
       quality: null,
       gridSize: DEFAULT_SETTINGS.gridSize,
-      objectFit: DEFAULT_SETTINGS.objectFit
+      objectFit: DEFAULT_SETTINGS.objectFit,
+      theme: DEFAULT_SETTINGS.theme
     }
   }
 
   // 初期化時に設定を読み込み
   const initialize = () => {
     loadSettings()
+    applyTheme()
+    setupSystemThemeListener()
   }
 
   // グリッドサイズを取得
@@ -144,10 +156,52 @@ function createSettings() {
     saveSettings()
   }
 
+  // テーマを取得
+  const getTheme = (): TTheme => {
+    return settings.value.theme ?? DEFAULT_SETTINGS.theme
+  }
+
+  // テーマを設定
+  const setTheme = (newTheme: TTheme) => {
+    settings.value.theme = newTheme
+    saveSettings()
+    applyTheme()
+  }
+
+  // テーマを適用（<html>要素にdarkクラスを付与/除去）
+  const applyTheme = () => {
+    const theme = getTheme()
+    const htmlElement = document.documentElement
+
+    if (theme === 'dark') {
+      htmlElement.classList.add('dark')
+    } else if (theme === 'light') {
+      htmlElement.classList.remove('dark')
+    } else {
+      // system: OSのプリファレンスに従う
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (prefersDark) {
+        htmlElement.classList.add('dark')
+      } else {
+        htmlElement.classList.remove('dark')
+      }
+    }
+  }
+
+  // systemテーマの場合、OSの設定変更を監視
+  const setupSystemThemeListener = () => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addEventListener('change', () => {
+      if (getTheme() === 'system') {
+        applyTheme()
+      }
+    })
+  }
+
   return {
     // リアクティブデータ
     settings,
-    
+
     // 関数
     loadSettings,
     saveSettings,
@@ -162,7 +216,10 @@ function createSettings() {
     setGridSize,
     getObjectFit,
     setObjectFit,
-    
+    getTheme,
+    setTheme,
+    applyTheme,
+
     // 定数
     DEFAULT_SETTINGS
   }

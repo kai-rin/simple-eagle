@@ -3,19 +3,19 @@
     class="c-grid-item relative aspect-square"
   >
     <div
-      class="w-full h-full bg-blue-50 rounded overflow-hidden relative cursor-pointer hover:bg-blue-100 transition-colors flex flex-col items-center justify-center"
+      class="w-full h-full bg-blue-50 dark:bg-blue-950 rounded overflow-hidden relative cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors flex flex-col items-center justify-center"
       @click="handleFolderClick"
     >
       <!-- フォルダーアイコン -->
       <div class="text-blue-500 text-2xl mb-2">📁</div>
       
       <!-- フォルダー名 -->
-      <span class="text-xs text-blue-700 text-center px-2 truncate w-full">
+      <span class="text-xs text-blue-700 dark:text-blue-300 text-center px-2 truncate w-full">
         {{ childFolder.name }}
       </span>
       
       <!-- 画像数 -->
-      <span class="text-xs text-blue-500 mt-1">
+      <span class="text-xs text-blue-500 dark:text-blue-400 mt-1">
         ({{ childFolder.imageCount }})
       </span>
     </div>

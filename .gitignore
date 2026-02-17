@@ -8,3 +8,7 @@ src/js/env.ts
 src/js/env.ts
 /test
 yarn.lock
+run.bat
+run_debug.bat
+CLAUDE.md
+.claude/

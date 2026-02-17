@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isSelectMode" class="action-view fixed bottom-0 left-0 w-full p-4 bg-white flex items-center" style="height:4.5rem">
+    <div v-if="isSelectMode" class="action-view fixed bottom-0 left-0 w-full p-4 bg-white dark:bg-gray-800 flex items-center" style="height:4.5rem">
         <!-- アクションモード未選択状態 -->
         <div v-if="actionMode === null" class="flex items-center w-full gap-4">
           <div class="w-full">

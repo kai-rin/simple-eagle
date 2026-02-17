@@ -1,6 +1,6 @@
 <template>
   <ModalView v-if="isModalOpen" :showCloseButton="false" @close="handleClose" :fit-width="true">
-    <div class="fixed left-0 top-0 w-[min(80vw,20rem)] h-full bg-white shadow-lg overflow-y-auto">
+    <div class="fixed left-0 top-0 w-[min(80vw,20rem)] h-full bg-white dark:bg-gray-800 shadow-lg overflow-y-auto">
       <div class="p-4">
 
         <div class="flex mb-4 justify-end items-center">

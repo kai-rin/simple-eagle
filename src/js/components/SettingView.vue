@@ -2,12 +2,12 @@
   <ModalView v-if="isSettingsOpen" @close="closeSettings" :showCloseButton="false" :fit-height="true">
     <Dialog @close="closeSettings">
       <div class="max-w-2xl mx-auto">
-        <h2 class="text-2xl font-bold mb-6">設定</h2>
+        <h2 class="text-2xl font-bold mb-6 dark:text-white">設定</h2>
         
         <form @submit.prevent="handleSaveSettings" class="space-y-6">
           <!-- ファイルサイズ上限 -->
           <div>
-            <label for="max_file_size" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="max_file_size" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               ファイルサイズ上限（KB）
             </label>
             <input
@@ -15,10 +15,10 @@
               v-model.number="settings.max_file_size"
               type="number"
               min="0"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 dark:text-white"
               placeholder="768"
             />
-            <p class="mt-1 text-sm text-gray-500">
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
               ファイルサイズがこの数値より大きい画像は圧縮して表示する<br>
               0 = 圧縮しない / 空欄 = 768
             </p>
@@ -26,7 +26,7 @@
 
           <!-- 圧縮率 -->
           <div>
-            <label for="quality" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="quality" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               JPEG圧縮率（0〜100）
             </label>
             <input
@@ -35,10 +35,10 @@
               type="number"
               min="0"
               max="100"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 dark:text-white"
               placeholder="85"
             />
-            <p class="mt-1 text-sm text-gray-500">
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
               空欄 = 85
             </p>
           </div>
@@ -48,7 +48,7 @@
             <button
               type="button"
               @click="closeSettings"
-              class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
+              class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
             >
               キャンセル
             </button>

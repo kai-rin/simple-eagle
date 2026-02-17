@@ -1,11 +1,18 @@
 <template>
-  <div class="container mx-auto pl-4 pr-4 pb-4">
+  <!-- 認証チェック中 -->
+  <div v-if="authState === 'checking'" />
+
+  <!-- ログイン画面 -->
+  <LoginView v-else-if="authState === 'login'" @authenticated="onAuthenticated" />
+
+  <!-- メインUI -->
+  <div v-else class="container mx-auto pl-4 pr-4 pb-4 min-h-screen">
     <!-- ヘッダーバー -->
     <Header />
 
     <!-- 画像一覧表示 -->
     <ImageListView />
-    
+
     <!-- フォルダー一覧モーダル -->
     <FolderTreeView />
 
@@ -20,22 +27,26 @@
 
     <!-- ルータービュー -->
     <router-view />
-    
+
   </div>
 </template>
 
 <script setup lang="ts">
-import { watch, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import ImageListView from './components/imageList/ImageListView.vue';
 import Header from './components/header/Header.vue';
 import FolderTreeView from './components/folderTree/FolderTreeView.vue';
 import SettingView from './components/SettingView.vue'
 import FilterView from './components/FilterView.vue';
 import ActionView from './components/action/ActionView.vue';
+import LoginView from './components/LoginView.vue';
 import { useEagleApi } from './composables/useEagleApi';
 import { useMainStore } from './store';
 import { useRoute, useRouter } from 'vue-router';
 import { ITEM_GET_COUNT } from './env';
+
+// 認証状態: 'checking' | 'login' | 'authenticated'
+const authState = ref<'checking' | 'login' | 'authenticated'>('checking');
 
 // サービスの取得
 const eagleApi = useEagleApi();
@@ -79,6 +90,9 @@ const loadImages = async (folderId: string, /*searchParams?: any*/) => {
 watch(
   [() => route.params.folderId, () => route.params.imageId, () => route.name, () => route.query],
   async ([folderId, imageId, routeName, query], [prevFolderId, prevImageId, prevRouteName, prevQuery]) => {
+    // 認証完了前はAPI呼び出しをしない
+    if (authState.value !== 'authenticated') return;
+
     console.log("[App.vue] Folder ID from URL:", folderId, routeName, query);
     // console.log("Route name:", routeName);
     // console.log("Query parameters:", query);
@@ -122,11 +136,9 @@ watch(
   },
 )
 
-// 初期読み込み
-onMounted(async () => {
+// 認証後のデータ読み込み
+const loadInitialData = async () => {
   await router.isReady()
-  // console.log("App mounted, loading initial data...");
-  // console.log(route.params);
 
   // フォルダー一覧の読み込み
   await eagleApi.loadFolders();
@@ -139,6 +151,28 @@ onMounted(async () => {
   const imageId = route.params.imageId
   if (imageId && typeof imageId === 'string') {
     store.setCurrentImage(imageId)
+  }
+}
+
+// ログイン成功時のコールバック
+const onAuthenticated = async () => {
+  authState.value = 'authenticated';
+  await loadInitialData();
+}
+
+// 初期読み込み
+onMounted(async () => {
+  // 認証チェック
+  try {
+    const res = await fetch('/api/auth/check');
+    if (res.ok) {
+      authState.value = 'authenticated';
+      await loadInitialData();
+    } else {
+      authState.value = 'login';
+    }
+  } catch {
+    authState.value = 'login';
   }
 })
 

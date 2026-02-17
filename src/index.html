@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eagle Simple Viewer</title>
+    <script>
+    // FOUC防止: Vueマウント前にテーマクラスを適用
+    (function() {
+      try {
+        var s = JSON.parse(localStorage.getItem('eagle_viewer_settings') || '{}');
+        var t = s.theme || 'system';
+        if (t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch(e) {}
+    })();
+    </script>
     <script type="module" src="./js/main.ts"></script>
 </head>
 <body>

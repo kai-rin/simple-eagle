@@ -3,7 +3,7 @@
 
     <!-- ボタン部分 -->
     <div
-      class="flex items-center py-2 cursor-pointer hover:bg-gray-100"
+      class="flex items-center py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
       @click="handleClick"
     >
       <!-- 展開ボタン -->
@@ -18,7 +18,7 @@
 
       <!-- フォルダー名 -->
       <span class="truncate">{{ folder.name }}</span>
-      <span v-if="folder.imageCount > 0" class="ml-2 text-gray-500 text-sm">
+      <span v-if="folder.imageCount > 0" class="ml-2 text-gray-500 dark:text-gray-400 text-sm">
         ({{ folder.imageCount }})
       </span>
     </div>

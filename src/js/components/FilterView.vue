@@ -2,12 +2,12 @@
   <ModalView v-if="isFilterOpen" @close="closeFilter" :showCloseButton="false" :fit-height="true">
     <Dialog @close="closeFilter">
       <div class="max-w-2xl mx-auto">
-        <h2 class="text-1xl font-bold mb-6">フィルター条件設定</h2>
+        <h2 class="text-1xl font-bold mb-6 dark:text-white">フィルター条件設定</h2>
 
         <form @submit.prevent="handleApplyFilter" class="space-y-5">
           <!-- 評価 -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               評価
             </label>
             <div class="flex flex-wrap gap-x-4 gap-y-2">
@@ -15,7 +15,7 @@
                 <input v-model="filterForm.stars" :value="star - 1" type="checkbox" class="mr-1" />
                 <span class="flex" style="font-size:0.8rem">
                   <span v-for="i in star - 1" :key="i" class="" style="color:#ff9900">★</span>
-                  <span v-for="i in 5 - (star - 1)" :key="i" class="text-gray-400">★</span>
+                  <span v-for="i in 5 - (star - 1)" :key="i" class="text-gray-400 dark:text-gray-600">★</span>
                 </span>
               </label>
             </div>
@@ -23,7 +23,7 @@
 
           <!-- 拡張子 -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               拡張子
             </label>
             <div class="flex gap-2 gap-x-4 flex-wrap">
@@ -36,23 +36,23 @@
 
           <!-- キーワード -->
           <div>
-            <label for="keyword" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="keyword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               キーワード
             </label>
             <input id="keyword" v-model="filterForm.keyword" type="text"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 dark:text-white"
               placeholder="検索キーワードを入力" />
           </div>
 
           <!-- タグ -->
           <div>
-            <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">
+            <label for="tags" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               タグ
             </label>
             <input id="tags" v-model="filterForm.tags" type="text"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 dark:text-white"
               placeholder="タグを「,」区切りで入力" />
-            <p class="mt-1 text-sm text-gray-500">
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
               複数のタグを「,」区切りで入力してください
             </p>
           </div>
@@ -60,11 +60,11 @@
           <!-- ボタン -->
           <div class="flex justify-end space-x-3">
             <button type="button" @click="closeFilter"
-              class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors">
+              class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
               キャンセル
             </button>
             <button type="button" @click="clearFilter"
-              class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors">
+              class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
               解除
             </button>
             <button type="submit"

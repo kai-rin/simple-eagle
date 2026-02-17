@@ -10,9 +10,11 @@ IF NOT EXIST "venv" (
 )
 
 echo Setting debug mode...
-REM デバッグモードを有効にするには下記の行のコメントアウトを外してください
-REM set EAGLE_DEBUG=true
-set EAGLE_DEBUG=false
+set EAGLE_DEBUG=true
 
-echo Starting server...
+REM 認証パスワードを設定するには下記の行のコメントアウトを外してパスワードを変更してください
+REM 未設定の場合は認証なしでアクセスできます
+REM set EAGLE_AUTH_PASSWORD=your_password_here
+
+echo Starting server in DEBUG mode...
 python -m uvicorn index:app --reload --host 0.0.0.0 --port 8000

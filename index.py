@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse, FileResponse
@@ -7,7 +7,11 @@ from pydantic import BaseModel
 import base64
 import os
 import requests
+import io
+import socket
+import qrcode
 from modules.eagle_api import eagle_api
+from modules.auth import verify_auth, verify_password, AUTH_ENABLED, AUTH_TOKEN
 
 class ImageRequest(BaseModel):
     path: str
@@ -26,9 +30,68 @@ app = FastAPI()
 # GZip圧縮を有効化
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
-# APIルーター
-from fastapi import APIRouter
-api_router = APIRouter()
+# 認証ルーター（認証不要）
+from fastapi import APIRouter, Request
+
+class LoginRequest(BaseModel):
+    password: str
+
+auth_router = APIRouter()
+
+@auth_router.get("/check")
+async def auth_check(request: Request):
+    """認証状態を確認"""
+    if not AUTH_ENABLED:
+        return {"status": "ok", "auth_enabled": False}
+    token = request.cookies.get('eagle_auth')
+    if token != AUTH_TOKEN:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return {"status": "ok", "auth_enabled": True}
+
+@auth_router.post("/login")
+async def auth_login(request: LoginRequest):
+    """パスワードを検証してセッションCookieを発行"""
+    if not AUTH_ENABLED:
+        return {"status": "ok"}
+    if not verify_password(request.password):
+        raise HTTPException(status_code=401, detail="Invalid password")
+    response = JSONResponse(content={"status": "ok"})
+    response.set_cookie(
+        key="eagle_auth",
+        value=AUTH_TOKEN,
+        httponly=True,
+        samesite="strict",
+    )
+    return response
+
+@auth_router.get("/server-info")
+async def server_info(request: Request):
+    """LAN内アクセス用のURL情報を返す"""
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+    except Exception:
+        ip = "127.0.0.1"
+    port = request.url.port or 80
+    url = f"http://{ip}:{port}"
+    return {"ip": ip, "port": port, "url": url}
+
+@auth_router.get("/qrcode")
+async def get_qrcode(url: str):
+    """指定URLのQRコード画像を生成して返す"""
+    qr = qrcode.QRCode(version=1, box_size=8, border=3)
+    qr.add_data(url)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+    return Response(content=buf.getvalue(), media_type="image/png")
+
+# APIルーター（認証必須）
+api_router = APIRouter(dependencies=[Depends(verify_auth)])
 
 @api_router.get("/list")
 async def get_list(
@@ -142,7 +205,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# APIルーターをインクルード
+# ルーターをインクルード
+app.include_router(auth_router, prefix="/api/auth")
 app.include_router(api_router, prefix="/api/eagle")
 
 

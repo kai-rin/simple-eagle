@@ -1,6 +1,6 @@
 <template>
   <div class="c-dialog p-4">
-    <div class="c-dialog__frame relative bg-white rounded-lg shadow-xl max-w-4xl w-full overflow-hidden">
+    <div class="c-dialog__frame relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full overflow-hidden">
       <!-- 閉じるボタン（Dialog用） -->
       <CloseButton 
         :show="showCloseButton"

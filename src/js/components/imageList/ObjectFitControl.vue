@@ -1,7 +1,7 @@
 <template>
   <button
     @click="toggleObjectFit"
-    class="flex items-center justify-center w-10 h-10 bg-white hover:bg-gray-100 rounded-lg transition-colors shadow-lg border"
+    class="flex items-center justify-center w-10 h-10 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors shadow-lg border dark:border-gray-600"
     :title="objectFit === 'cover' ? 'Switch to Contain' : 'Switch to Cover'"
   >
     <!-- object-cover アイコン -->

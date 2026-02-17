@@ -2,7 +2,7 @@
   <div class="c-grid-item relative" ref="rootElement">
     <div
       :class="[
-        'bg-gray-100 rounded overflow-hidden relative aspect-square',
+        'bg-gray-100 dark:bg-gray-800 rounded overflow-hidden relative aspect-square',
         isClickableImage(props.image) ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''
       ]"
       @click="isClickableImage(props.image) ? handleImageClick(props.image) : null"

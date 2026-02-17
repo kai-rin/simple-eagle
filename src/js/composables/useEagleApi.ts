@@ -12,6 +12,14 @@ class EagleApi {
 
   private constructor() {}
 
+  /** 401レスポンスの場合はページをリロードしてログイン画面に戻す */
+  private checkUnauthorized(response: Response): void {
+    if (response.status === 401) {
+      window.location.reload()
+      throw new Error('Unauthorized')
+    }
+  }
+
   public static getInstance(): EagleApi {
     if (!EagleApi.instance) {
       EagleApi.instance = new EagleApi()
@@ -72,6 +80,7 @@ class EagleApi {
       }
       console.log('API URL:', url.toString());
       const response = await fetch(url)
+      this.checkUnauthorized(response)
 
       // console.log('API response status:', response.status)
       if (!response.ok) {
@@ -219,6 +228,7 @@ class EagleApi {
 
     try {
       const response = await fetch(`${API_BASE_URL}/folders`)
+      this.checkUnauthorized(response)
       // console.log('API response status:', response.status)
       if (!response.ok) {
         console.error(`HTTP error! status: ${response.status}`)
@@ -288,6 +298,7 @@ class EagleApi {
           ...data
         })
       });
+      this.checkUnauthorized(response)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -332,6 +343,7 @@ class EagleApi {
           itemIds: itemIds
         })
       });
+      this.checkUnauthorized(response)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

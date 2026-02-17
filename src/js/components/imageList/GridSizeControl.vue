@@ -1,20 +1,20 @@
 <template>
   <!-- グリッドサイズ変更ボタン -->
-  <div class="flex items-center bg-white shadow-lg rounded-lg border">
-    <button 
+  <div class="flex items-center bg-white dark:bg-gray-800 shadow-lg rounded-lg border dark:border-gray-600">
+    <button
       @click="decreaseGridSize"
       :disabled="!canDecrease"
-      class="h-10 px-3 text-lg font-bold hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed rounded-l-lg"
+      class="h-10 px-3 text-lg font-bold hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-l-lg"
     >
       −
     </button>
-    <div class="h-10 px-2 flex items-center text-sm text-gray-500 border-l border-r">
+    <div class="h-10 px-2 flex items-center text-sm text-gray-500 dark:text-gray-400 border-l border-r dark:border-gray-600">
       {{ currentDisplayedGridSize }}
     </div>
-    <button 
+    <button
       @click="increaseGridSize"
       :disabled="!canIncrease"
-      class="h-10 px-3 text-lg font-bold hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed rounded-r-lg"
+      class="h-10 px-3 text-lg font-bold hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-r-lg"
     >
       ＋
     </button>

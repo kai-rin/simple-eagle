@@ -2,7 +2,7 @@
   <button
     @click="$emit('click')"
     class="p-2 rounded-lg transition-colors duration-200"
-    :class="isActive ? 'bg-sky-500 hover:bg-sky-300' : 'hover:bg-gray-100'"
+    :class="isActive ? 'bg-sky-500 hover:bg-sky-300' : 'hover:bg-gray-100 dark:hover:bg-gray-700'"
     title="複数選択"
   >
     <!-- 丸とチェックマークのアイコン -->
@@ -12,7 +12,7 @@
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      :class="isActive ? 'text-white' : 'text-gray-600'"
+      :class="isActive ? 'text-white' : 'text-gray-600 dark:text-gray-300'"
     >
       <!-- 丸のフレーム -->
       <circle

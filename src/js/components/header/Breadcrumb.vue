@@ -1,23 +1,23 @@
 <template>
-  <div class="basis-full text-sm text-blue-500">
+  <div class="basis-full text-sm text-blue-500 dark:text-blue-400">
     <!-- パンくずリストを表示 -->
     <nav class="flex items-center space-x-2" v-if="breadcrumbPath.length > 0">
       <!-- ホーム -->
       <button 
         @click="handleBreadcrumbClick('all')"
-        class="hover:text-gray-600 transition-colors"
-        :class="{ 'text-blue-500 font-medium': !currentFolder }"
+        class="hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+        :class="{ 'text-blue-500 dark:text-blue-400 font-medium': !currentFolder }"
       >
         ALL
       </button>
       
       <!-- パンくずの各階層 -->
       <template v-for="(item) in breadcrumbPath" :key="item.id">
-        <span class="text-gray-300">></span>
+        <span class="text-gray-300 dark:text-gray-600">></span>
         <button 
           @click="handleBreadcrumbClick(item.id)"
-          class="hover:text-gray-600 transition-colors truncate max-w-32"
-          :class="{ 'text-gray-600 font-medium': item.id === currentFolder?.id }"
+          class="hover:text-gray-600 dark:hover:text-gray-300 transition-colors truncate max-w-32"
+          :class="{ 'text-gray-600 dark:text-gray-300 font-medium': item.id === currentFolder?.id }"
           :title="item.name"
         >
           {{ item.name }}
@@ -27,7 +27,7 @@
     
     <!-- フォルダーが選択されていない場合 -->
     <nav v-else class="flex items-center">
-      <span class="text-gray-400 font-medium">ALL</span>
+      <span class="text-gray-400 dark:text-gray-500 font-medium">ALL</span>
     </nav>
   </div>
 </template>

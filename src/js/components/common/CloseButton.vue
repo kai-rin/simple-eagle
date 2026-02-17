@@ -3,7 +3,7 @@
     v-if="show"
     @click="$emit('close')"
     :class="[
-      'bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 transition-all shadow-lg',
+      'bg-white bg-opacity-80 hover:bg-opacity-100 dark:bg-gray-700 dark:bg-opacity-80 dark:hover:bg-opacity-100 rounded-full p-2 transition-all shadow-lg dark:text-white',
       positionClass
     ]"
   >
