@@ -176,15 +176,48 @@ class EagleApi:
         try:
             url = f'{self.base_url}/api/item/moveToTrash'
             data = {"itemIds": item_ids}
-            
+
             debug_print(f"Moving items to trash: {item_ids}")
             response = requests.post(url, json=data)
+            debug_print(f"Move to trash response: {response.status_code} {response.text}")
             response.raise_for_status()
             result = response.json()
-            debug_print(f"Move to trash result: {result}")
+
+            # レスポンス形式を正規化
+            if "status" not in result:
+                result["status"] = "success" if response.status_code == 200 else "error"
+
             return result
         except requests.exceptions.RequestException as e:
             debug_print(f"Error moving items to trash: {e}")
+            return {"status": "error", "message": str(e)}
+
+    def get_uncategorized_list(self, limit=200, offset=0):
+        """
+        未分類（フォルダなし）アイテムを取得
+        Args:
+            limit (int): 取得する画像の最大数
+            offset (int): ページネーションオフセット
+        """
+        try:
+            # 全アイテムを取得
+            all_data = self.get_list(limit=10000, offset=0)
+            if 'data' not in all_data or not isinstance(all_data['data'], list):
+                return all_data
+
+            # folders が空のアイテムのみ抽出
+            uncategorized = [
+                item for item in all_data['data']
+                if not item.get('folders') or len(item['folders']) == 0
+            ]
+
+            debug_print(f"Uncategorized items: {len(uncategorized)} out of {len(all_data['data'])}")
+
+            # ページネーション適用
+            paginated = uncategorized[offset:offset + limit]
+            return {"status": "success", "data": paginated}
+        except Exception as e:
+            debug_print(f"Error getting uncategorized list: {e}")
             return {"status": "error", "message": str(e)}
 
 eagle_api = EagleApi()

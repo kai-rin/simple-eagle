@@ -368,7 +368,7 @@ const updateListInfo = async () => {
  * IntersectionObserverで interSectionRef が画面に入ったら次のアイテムを読み込む
  */
 const loadImagesInfinite = async () => {
-  if (!eagleApi.isImagesLoading.value) {
+  if (!eagleApi.isImagesLoading.value && eagleApi.hasMoreItems.value) {
     // console.log("[ImageListView] loadImagesInfinite triggered by IntersectionObserver");
 
     const currentFolder = store.getCurrentFolder;

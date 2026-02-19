@@ -110,6 +110,8 @@ async def get_list(
         folder_id (str, optional): 指定されたフォルダーIDの画像のみを取得
     """
     try:
+        if folders == "uncategorized":
+            return eagle_api.get_uncategorized_list(limit=limit, offset=offset)
         return eagle_api.get_list(
             limit=limit,
             offset=offset,
@@ -190,9 +192,11 @@ async def move_to_trash(request: MoveToTrashRequest):
     """
     try:
         result = eagle_api.move_to_trash(request.itemIds)
-        if result["status"] == "error":
-            raise HTTPException(status_code=500, detail=result["message"])
+        if result.get("status") == "error":
+            raise HTTPException(status_code=500, detail=result.get("message", "Unknown error"))
         return result
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

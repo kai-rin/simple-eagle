@@ -7,6 +7,7 @@ class EagleApi {
   private static instance: EagleApi;
   public isImagesLoading = ref(false);
   public isFoldersLoading = ref(false);
+  public hasMoreItems = ref(true);
   private error = ref<string | null>(null);
   private store = useMainStore();
 
@@ -100,6 +101,16 @@ class EagleApi {
         return []
       }
       console.log('Number of images received:', data.data.length)
+
+      // 特定フォルダ表示時、そのフォルダに所属しない画像を除去（Eagle API の漏れ対策）
+      if (folderId && folderId !== 'all' && folderId !== 'uncategorized') {
+        const filtered = (data.data as any[]).filter(
+          (item) => item.folders && item.folders.includes(folderId)
+        )
+        console.log(`Folder filter: ${data.data.length} → ${filtered.length} (folder: ${folderId})`)
+        return filtered
+      }
+
       return data.data || []
 
     } catch (err) {
@@ -125,10 +136,17 @@ class EagleApi {
     console.log("ローディング開始");
     this.isImagesLoading.value = true
 
+    // これ以上データがない場合はスキップ（offset=0は初回リセットなので除外）
+    const explicitOffset = params.offset
+    if (!this.hasMoreItems.value && explicitOffset !== 0) {
+      this.isImagesLoading.value = false
+      return
+    }
+
     const {
       folderId = 'all',
       limit = ITEM_GET_COUNT,
-      offset = this.store.getCurrentPageCount,
+      offset = this.store.getCurrentPageCount * ITEM_GET_COUNT,
       orderBy,
       keyword,
       ext,
@@ -138,6 +156,8 @@ class EagleApi {
     // 初回読み込みの場合は画像をクリア
     if (offset === 0) {
       this.store.setImages([])
+      this.store.resetCurrentPageCount()
+      this.hasMoreItems.value = true
       console.log("初回呼び出し");
     } else {
       console.log("2回目以降の呼び出し");
@@ -155,9 +175,14 @@ class EagleApi {
       tags
     })
 
+    // 取得件数がlimit未満なら全データ取得完了
+    if (images.length < ITEM_GET_COUNT) {
+      console.log("全データ取得完了", this.store.getImages.length + images.length);
+      this.hasMoreItems.value = false
+    }
+
     // 0件だったらこれ以上のデータは無い
     if (images.length === 0) {
-      console.log("データ無かった", this.store.getImages.length);
       this.isImagesLoading.value = false;
       return;
     }
@@ -264,8 +289,22 @@ class EagleApi {
         extendTags: []
       }
     
-      // 「全て」を先頭に追加して保存
-      this.store.setFolders([allItem, ...folders])
+      // 「未分類」フォルダを追加
+      const uncategorizedItem: TFolderItem = {
+        id: "uncategorized",
+        name: "未分類",
+        description: "",
+        children: [],
+        modificationTime: Date.now(),
+        tags: [],
+        imageCount: 0,
+        descendantImageCount: 0,
+        pinyin: "",
+        extendTags: []
+      }
+
+      // 「全て」「未分類」を先頭に追加して保存
+      this.store.setFolders([allItem, uncategorizedItem, ...folders])
  
     } catch (err) {
       console.error('Error in loadFolders:', err)

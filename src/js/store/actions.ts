@@ -28,6 +28,11 @@ export const actions = {
     this.currentPageCount += 1;
   },
 
+  // ページカウントをリセット（フォルダ切り替え時）
+  resetCurrentPageCount(this: TStoreState) {
+    this.currentPageCount = 0;
+  },
+
   // 現在のフィルタクエリを設定
   setCurrentFilter(this: TStoreState, filter: TFilter | null) {
     this.currentFilter = filter;

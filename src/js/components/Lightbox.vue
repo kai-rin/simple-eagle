@@ -49,6 +49,15 @@
         @click.stop
       >
         <div class="bg-black bg-opacity-75 text-white p-6">
+          <!-- ファイル削除（上部に配置） -->
+          <div class="flex justify-end mb-4">
+            <TrashButton
+              @click="moveToTrash"
+              class="text-gray-300 hover:text-red-400"
+              :style="{ opacity: isDeleting ? 0.5 : 1, pointerEvents: isDeleting ? 'none' : 'auto' }"
+            />
+          </div>
+
           <!-- 評価 -->
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-300 mb-1">評価</label>
@@ -104,14 +113,6 @@
             </div>
           </div>
 
-          <!-- ファイル削除 -->
-          <div class="flex justify-end">
-            <TrashButton
-              @click.stop="moveToTrash"
-              class="text-gray-300 hover:text-red-400"
-              :style="{ opacity: isDeleting ? 0.5 : 1, pointerEvents: isDeleting ? 'none' : 'auto' }"
-            />
-          </div>
         </div>
       </div>
     </transition>
