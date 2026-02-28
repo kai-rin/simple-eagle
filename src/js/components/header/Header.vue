@@ -10,6 +10,8 @@
 
     <!-- ツール系ボタン -->
     <div class="flex item-center justify-end gap-4">
+      <!-- 自動リロード切替ボタン -->
+      <AutoReloadToggleButton />
       <!-- テーマ切替ボタン -->
       <ThemeToggleButton />
       <!-- フィルターボタン -->
@@ -24,6 +26,7 @@
 
 <script setup lang="ts">
 import HamburgerButton from './HamburgerButton.vue';
+import AutoReloadToggleButton from './AutoReloadToggleButton.vue';
 import ThemeToggleButton from './ThemeToggleButton.vue';
 import FilterButton from './FilterButton.vue';
 import SelectButton from './SelectButton.vue';

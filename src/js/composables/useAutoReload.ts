@@ -21,6 +21,9 @@ function createAutoReload() {
   // ポーリングが動作中かどうか
   const isPolling = ref(false)
 
+  // 重複実行を防ぐガード
+  let isChecking = false
+
   /**
    * 現在のフォルダの先頭アイテムを軽量に取得してスナップショットを返す
    */
@@ -49,28 +52,36 @@ function createAutoReload() {
    * 変更を検知して画像リストをリロード
    */
   const checkForChanges = async () => {
-    // ローディング中はスキップ（無限スクロールの途中など）
-    if (eagleApi.isImagesLoading.value) {
-      return
-    }
+    // 重複実行を防ぐ
+    if (isChecking) return
+    isChecking = true
 
-    const currentSnapshot = await fetchSnapshot()
-    if (currentSnapshot === null) return
+    try {
+      // ローディング中はスキップ（無限スクロールの途中など）
+      if (eagleApi.isImagesLoading.value) {
+        return
+      }
 
-    // 初回は基準値を設定するだけ（リロードしない）
-    if (lastSnapshot.value === null) {
-      lastSnapshot.value = currentSnapshot
-      return
-    }
+      const currentSnapshot = await fetchSnapshot()
+      if (currentSnapshot === null) return
 
-    // 変更を検知（先頭アイテムIDまたは件数が異なれば変更あり）
-    const changed = currentSnapshot.firstId !== lastSnapshot.value.firstId ||
-      currentSnapshot.count !== lastSnapshot.value.count
+      // 初回は基準値を設定するだけ（リロードしない）
+      if (lastSnapshot.value === null) {
+        lastSnapshot.value = currentSnapshot
+        return
+      }
 
-    if (changed) {
-      console.log('[AutoReload] Change detected, reloading...')
-      lastSnapshot.value = currentSnapshot
-      await reloadCurrentView()
+      // 変更を検知（先頭アイテムIDまたは件数が異なれば変更あり）
+      const changed = currentSnapshot.firstId !== lastSnapshot.value.firstId ||
+        currentSnapshot.count !== lastSnapshot.value.count
+
+      if (changed) {
+        console.log('[AutoReload] Change detected, reloading...')
+        lastSnapshot.value = currentSnapshot
+        await reloadCurrentView()
+      }
+    } finally {
+      isChecking = false
     }
   }
 
@@ -157,11 +168,17 @@ function createAutoReload() {
   }
 
   // タブ表示/非表示でポーリングを制御（モバイル最適化）
-  const handleVisibilityChange = () => {
+  const handleVisibilityChange = async () => {
     if (document.hidden) {
       stopPolling()
     } else {
-      checkForChanges()
+      // タブ復帰時は常にリロードして最新データを表示
+      if (settings.getAutoReload()) {
+        await reloadCurrentView()
+        // ベースラインを更新
+        const snapshot = await fetchSnapshot()
+        if (snapshot) lastSnapshot.value = snapshot
+      }
       startPolling()
     }
   }
