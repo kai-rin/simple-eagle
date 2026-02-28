@@ -43,6 +43,46 @@
             </p>
           </div>
 
+          <!-- 自動リロード -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              自動リロード
+            </label>
+            <div class="flex items-center gap-2">
+              <input
+                type="checkbox"
+                v-model="settings.autoReload"
+                id="autoReload"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label for="autoReload" class="text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+                有効にする
+              </label>
+            </div>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              Eagleのライブラリに変更があった場合、自動で画像一覧を更新する
+            </p>
+          </div>
+
+          <!-- ポーリング間隔 -->
+          <div v-if="settings.autoReload">
+            <label for="autoReloadInterval" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              チェック間隔（秒）
+            </label>
+            <input
+              id="autoReloadInterval"
+              v-model.number="settings.autoReloadInterval"
+              type="number"
+              min="5"
+              max="120"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 dark:text-white"
+              placeholder="10"
+            />
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              5〜120秒の範囲で設定 / 空欄 = 10秒
+            </p>
+          </div>
+
           <!-- 保存ボタン -->
           <div class="flex justify-end space-x-3">
             <button

@@ -14,6 +14,8 @@ export type TSettings = {
   }
   objectFit: 'cover' | 'contain'
   theme: TTheme
+  autoReload: boolean
+  autoReloadInterval: number
 }
 
 // デフォルト設定値
@@ -26,7 +28,9 @@ const DEFAULT_SETTINGS = {
     xl: 6
   },
   objectFit: 'cover',
-  theme: 'system'
+  theme: 'system',
+  autoReload: true,
+  autoReloadInterval: 10
 } as const
 
 // localStorage のキー
@@ -42,7 +46,9 @@ function createSettings() {
     quality: null,
     gridSize: DEFAULT_SETTINGS.gridSize,
     objectFit: DEFAULT_SETTINGS.objectFit,
-    theme: DEFAULT_SETTINGS.theme
+    theme: DEFAULT_SETTINGS.theme,
+    autoReload: DEFAULT_SETTINGS.autoReload,
+    autoReloadInterval: DEFAULT_SETTINGS.autoReloadInterval
   })
 
   // localStorageから設定を読み込む
@@ -56,7 +62,9 @@ function createSettings() {
           quality: parsed.quality || null,
           gridSize: parsed.gridSize || DEFAULT_SETTINGS.gridSize,
           objectFit: parsed.objectFit || DEFAULT_SETTINGS.objectFit,
-          theme: parsed.theme || DEFAULT_SETTINGS.theme
+          theme: parsed.theme || DEFAULT_SETTINGS.theme,
+          autoReload: parsed.autoReload ?? DEFAULT_SETTINGS.autoReload,
+          autoReloadInterval: parsed.autoReloadInterval ?? DEFAULT_SETTINGS.autoReloadInterval
         }
       }
     } catch (error) {
@@ -73,7 +81,9 @@ function createSettings() {
       quality: settings.value.quality || DEFAULT_SETTINGS.quality,
       gridSize: settings.value.gridSize,
       objectFit: settings.value.objectFit,
-      theme: settings.value.theme
+      theme: settings.value.theme,
+      autoReload: settings.value.autoReload,
+      autoReloadInterval: settings.value.autoReloadInterval
     }
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settingsToSave))
@@ -87,7 +97,9 @@ function createSettings() {
       quality: DEFAULT_SETTINGS.quality,
       gridSize: DEFAULT_SETTINGS.gridSize,
       objectFit: DEFAULT_SETTINGS.objectFit,
-      theme: DEFAULT_SETTINGS.theme
+      theme: DEFAULT_SETTINGS.theme,
+      autoReload: DEFAULT_SETTINGS.autoReload,
+      autoReloadInterval: DEFAULT_SETTINGS.autoReloadInterval
     }
   }
 
@@ -123,7 +135,9 @@ function createSettings() {
       quality: null,
       gridSize: DEFAULT_SETTINGS.gridSize,
       objectFit: DEFAULT_SETTINGS.objectFit,
-      theme: DEFAULT_SETTINGS.theme
+      theme: DEFAULT_SETTINGS.theme,
+      autoReload: DEFAULT_SETTINGS.autoReload,
+      autoReloadInterval: DEFAULT_SETTINGS.autoReloadInterval
     }
   }
 
@@ -166,6 +180,28 @@ function createSettings() {
     settings.value.theme = newTheme
     saveSettings()
     applyTheme()
+  }
+
+  // 自動リロードの有効/無効を取得
+  const getAutoReload = (): boolean => {
+    return settings.value.autoReload ?? DEFAULT_SETTINGS.autoReload
+  }
+
+  // 自動リロードの有効/無効を設定
+  const setAutoReload = (enabled: boolean) => {
+    settings.value.autoReload = enabled
+    saveSettings()
+  }
+
+  // ポーリング間隔を取得（秒）
+  const getAutoReloadInterval = (): number => {
+    return settings.value.autoReloadInterval ?? DEFAULT_SETTINGS.autoReloadInterval
+  }
+
+  // ポーリング間隔を設定（秒）
+  const setAutoReloadInterval = (interval: number) => {
+    settings.value.autoReloadInterval = Math.max(5, Math.min(120, interval))
+    saveSettings()
   }
 
   // テーマを適用（<html>要素にdarkクラスを付与/除去）
@@ -219,6 +255,10 @@ function createSettings() {
     getTheme,
     setTheme,
     applyTheme,
+    getAutoReload,
+    setAutoReload,
+    getAutoReloadInterval,
+    setAutoReloadInterval,
 
     // 定数
     DEFAULT_SETTINGS

@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import ImageListView from './components/imageList/ImageListView.vue';
 import Header from './components/header/Header.vue';
 import FolderTreeView from './components/folderTree/FolderTreeView.vue';
@@ -41,6 +41,8 @@ import FilterView from './components/FilterView.vue';
 import ActionView from './components/action/ActionView.vue';
 import LoginView from './components/LoginView.vue';
 import { useEagleApi } from './composables/useEagleApi';
+import { useAutoReload } from './composables/useAutoReload';
+import { useSettings } from './composables/useSettings';
 import { useMainStore } from './store';
 import { useRoute, useRouter } from 'vue-router';
 import { ITEM_GET_COUNT } from './env';
@@ -50,12 +52,17 @@ const authState = ref<'checking' | 'login' | 'authenticated'>('checking');
 
 // サービスの取得
 const eagleApi = useEagleApi();
+const autoReload = useAutoReload();
+const settingsInstance = useSettings();
 const store = useMainStore();
 const route = useRoute();
 const router = useRouter();
 
 const loadImages = async (folderId: string, /*searchParams?: any*/) => {
   if ( folderId === store.getCurrentFolderId ) return;
+
+  // フォルダ切替時にmodificationTimeの基準値をリセット
+  autoReload.resetBaseline();
 
   console.log("[App.vue] Loading images:", folderId, store.getCurrentFolderId);
   store.setCurrentFolderId(folderId as string);
@@ -152,6 +159,10 @@ const loadInitialData = async () => {
   if (imageId && typeof imageId === 'string') {
     store.setCurrentImage(imageId)
   }
+
+  // 自動リロードのポーリングを開始
+  autoReload.setupVisibilityListener()
+  autoReload.startPolling()
 }
 
 // ログイン成功時のコールバック
@@ -159,6 +170,21 @@ const onAuthenticated = async () => {
   authState.value = 'authenticated';
   await loadInitialData();
 }
+
+// 自動リロード設定の変更を監視
+watch(
+  () => [settingsInstance.settings.value.autoReload, settingsInstance.settings.value.autoReloadInterval],
+  () => {
+    if (authState.value === 'authenticated') {
+      autoReload.restartPolling()
+    }
+  }
+)
+
+// クリーンアップ
+onUnmounted(() => {
+  autoReload.stopPolling()
+})
 
 // 初期読み込み
 onMounted(async () => {

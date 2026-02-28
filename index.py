@@ -200,6 +200,14 @@ async def move_to_trash(request: MoveToTrashRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/library-info")
+async def get_library_info():
+    """ライブラリ情報を取得（変更検知用）"""
+    try:
+        return eagle_api.get_library_info()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # CORSの設定
 app.add_middleware(
     CORSMiddleware,

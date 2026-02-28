@@ -192,6 +192,16 @@ class EagleApi:
             debug_print(f"Error moving items to trash: {e}")
             return {"status": "error", "message": str(e)}
 
+    def get_library_info(self):
+        """ライブラリ情報を取得（modificationTimeを含む）"""
+        try:
+            response = requests.get(f'{self.base_url}/api/library/info')
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            debug_print(f"Eagle API error (library info): {e}")
+            return {"status": "error", "message": str(e)}
+
     def get_uncategorized_list(self, limit=200, offset=0):
         """
         未分類（フォルダなし）アイテムを取得
