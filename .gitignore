@@ -5,10 +5,14 @@ venv
 package-lock.json
 cache
 src/js/env.ts
-src/js/env.ts
 /test
 yarn.lock
 run.bat
+run.sh
 run_debug.bat
+dist/
+DEBUG_README.md
+test_cache.py
 CLAUDE.md
 .claude/
+.playwright-mcp/
