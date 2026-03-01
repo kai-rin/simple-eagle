@@ -46,6 +46,7 @@ import { debounce } from 'lodash-es'
 import { useEagleApi } from '../../composables/useEagleApi'
 import { ITEM_GET_COUNT } from '../../env'
 import { useSettings } from '../../composables/useSettings'
+import { useAutoReload } from '../../composables/useAutoReload'
 import { useMainStore } from '../../store'
 import type { TImageItem } from '../../types'
 import GridSizeControl from './GridSizeControl.vue'
@@ -54,6 +55,7 @@ import ImagelistviewFolder from './ImageListFolder.vue'
 import ImageListImage from './ImageListImage.vue'
 
 const settings = useSettings()
+const autoReload = useAutoReload()
 const store = useMainStore()
 const eagleApi = useEagleApi()
 
@@ -368,6 +370,11 @@ const updateListInfo = async () => {
  * IntersectionObserverで interSectionRef が画面に入ったら次のアイテムを読み込む
  */
 const loadImagesInfinite = async () => {
+  // リロード中はIntersectionObserverからのトリガーを無視
+  if (autoReload.isReloading.value) return
+  // 初期データロード前はスキップ（App.vueのloadInitialDataに任せる）
+  if (!store.getCurrentFolderId) return
+
   if (!eagleApi.isImagesLoading.value && eagleApi.hasMoreItems.value) {
     // console.log("[ImageListView] loadImagesInfinite triggered by IntersectionObserver");
 

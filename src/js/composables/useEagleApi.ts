@@ -404,6 +404,50 @@ class EagleApi {
       throw error;
     }
   }
+
+  /**
+   * ライブラリ情報を取得（変更検知用の軽量エンドポイント）
+   */
+  public async fetchLibraryInfo(): Promise<{ modificationTime: number } | null> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/library-info`)
+      this.checkUnauthorized(response)
+      if (!response.ok) return null
+      const data = await response.json()
+      if (data.status === 'error') return null
+      return {
+        modificationTime: data.data?.modificationTime ?? 0,
+      }
+    } catch {
+      return null
+    }
+  }
+
+  /**
+   * 変更検知用：最新アイテム1件のシグネチャを取得
+   * Eagle の library-info の modificationTime が画像追加で更新されないため、
+   * 最新アイテムの ID を比較して変更を検出する
+   */
+  public async fetchLatestItemSignature(folderId?: string): Promise<string | null> {
+    try {
+      const url = new URL(`${API_BASE_URL}/list`, window.location.origin)
+      url.searchParams.append('limit', '1')
+      url.searchParams.append('offset', '0')
+      if (folderId && folderId !== 'all') {
+        url.searchParams.append('folders', folderId)
+      }
+      const response = await fetch(url)
+      this.checkUnauthorized(response)
+      if (!response.ok) return null
+      const data = await response.json()
+      if (data.status === 'error' || !data.data) return null
+      if (data.data.length === 0) return 'empty'
+      const item = data.data[0]
+      return `${item.id}:${item.modificationTime || 0}`
+    } catch {
+      return null
+    }
+  }
 }
 
 export const useEagleApi = () => {

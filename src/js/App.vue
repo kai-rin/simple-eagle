@@ -171,9 +171,9 @@ const onAuthenticated = async () => {
   await loadInitialData();
 }
 
-// 自動リロード設定の変更を監視
+// ポーリング間隔の変更を監視（ON/OFFはトグルボタンに一任）
 watch(
-  () => [settingsInstance.settings.value.autoReload, settingsInstance.settings.value.autoReloadInterval],
+  () => settingsInstance.settings.value.autoReloadInterval,
   () => {
     if (authState.value === 'authenticated') {
       autoReload.restartPolling()
@@ -184,6 +184,7 @@ watch(
 // クリーンアップ
 onUnmounted(() => {
   autoReload.stopPolling()
+  autoReload.removeVisibilityListener()
 })
 
 // 初期読み込み

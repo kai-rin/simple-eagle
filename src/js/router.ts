@@ -4,6 +4,10 @@ import Lightbox from './components/Lightbox.vue'
 
 const routes = [
   {
+    path: '/',
+    redirect: '/folder/all'
+  },
+  {
     path: '/folder/:folderId',
     name: 'folder',
     component: { template: '<span></span>' },
