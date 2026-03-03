@@ -83,6 +83,24 @@
             </p>
           </div>
 
+          <!-- LAN アクセス情報 -->
+          <div v-if="lanUrl">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              LAN アクセス
+            </label>
+            <div class="text-center p-4 bg-gray-50 dark:bg-gray-900 rounded-md">
+              <a :href="lanUrl" class="text-sm text-blue-600 dark:text-blue-400 underline break-all">{{ lanUrl }}</a>
+              <img
+                :src="`/api/auth/qrcode?url=${encodeURIComponent(lanUrl)}`"
+                alt="QR Code"
+                class="mx-auto mt-3 w-48 h-48"
+              />
+              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                スマホからこのURLまたはQRコードでアクセスできます
+              </p>
+            </div>
+          </div>
+
           <!-- 保存ボタン -->
           <div class="flex justify-end space-x-3">
             <button
@@ -106,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 // import { useRouter } from 'vue-router';
 import { useSettings } from '../composables/useSettings';
 import { useMainStore } from '../store';
@@ -117,6 +135,7 @@ import Dialog from './common/Dialog.vue';
 const { settings, saveSettings, initialize } = useSettings()
 // const router = useRouter()
 const store = useMainStore()
+const lanUrl = ref('')
 
 
 // 設定が開いているかどうかをcomputedプロパティで管理
@@ -139,8 +158,17 @@ const closeSettings = () => {
 }
 
 // コンポーネントマウント時に設定を読み込み
-onMounted(() => {
+onMounted(async () => {
   initialize()
+  try {
+    const res = await fetch('/api/auth/server-info')
+    if (res.ok) {
+      const data = await res.json()
+      lanUrl.value = data.url
+    }
+  } catch {
+    // サーバー情報取得失敗時は非表示のまま
+  }
 })
 </script>
 

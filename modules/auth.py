@@ -10,9 +10,18 @@ AUTH_ENABLED = bool(EAGLE_AUTH_PASSWORD)
 AUTH_TOKEN = secrets.token_hex(32)
 
 
+def is_local_request(request: Request) -> bool:
+    """リクエストがローカルホストからのものか判定する"""
+    client_host = request.client.host if request.client else None
+    return client_host in ("127.0.0.1", "::1")
+
+
 async def verify_auth(request: Request):
-    """APIルーターの依存関数。認証が有効な場合、Cookieのトークンを検証する"""
+    """APIルーターの依存関数。認証が有効な場合、Cookieのトークンを検証する。
+    ローカルホストからのアクセスは認証をスキップする。"""
     if not AUTH_ENABLED:
+        return
+    if is_local_request(request):
         return
     token = request.cookies.get('eagle_auth')
     if token != AUTH_TOKEN:

@@ -11,7 +11,7 @@ import io
 import socket
 import qrcode
 from modules.eagle_api import eagle_api
-from modules.auth import verify_auth, verify_password, AUTH_ENABLED, AUTH_TOKEN
+from modules.auth import verify_auth, verify_password, is_local_request, AUTH_ENABLED, AUTH_TOKEN
 
 class ImageRequest(BaseModel):
     path: str
@@ -40,8 +40,10 @@ auth_router = APIRouter()
 
 @auth_router.get("/check")
 async def auth_check(request: Request):
-    """認証状態を確認"""
+    """認証状態を確認。ローカルホストからのアクセスは認証不要扱い。"""
     if not AUTH_ENABLED:
+        return {"status": "ok", "auth_enabled": False}
+    if is_local_request(request):
         return {"status": "ok", "auth_enabled": False}
     token = request.cookies.get('eagle_auth')
     if token != AUTH_TOKEN:
