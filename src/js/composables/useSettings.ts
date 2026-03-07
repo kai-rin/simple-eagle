@@ -24,8 +24,8 @@ const DEFAULT_SETTINGS = {
   quality: 85,
   gridSize: {
     base: 4,
-    md: 5,
-    xl: 6
+    md: 4,
+    xl: 4
   },
   objectFit: 'cover',
   theme: 'system',

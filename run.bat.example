@@ -16,5 +16,6 @@ REM 未設定の場合は認証なしでアクセスできます
 REM set EAGLE_AUTH_PASSWORD=your_password_here
 
 echo Starting server...
-start http://localhost:1595
+echo Access: http://localhost:1595
+python -c "import socket,qrcode;s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM);s.connect(('8.8.8.8',80));ip=s.getsockname()[0];s.close();url=f'http://{ip}:1595';print(f'LAN Access: {url}');qr=qrcode.QRCode(border=1);qr.add_data(url);qr.print_ascii(invert=True)"
 python -m uvicorn index:app --reload --host 0.0.0.0 --port 1595
